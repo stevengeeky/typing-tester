@@ -14,6 +14,7 @@ var wldiv, inp;
 
 var current = "", last = "";
 var cchar = 0, wchar = 0;
+var tchar = 0, mistakes = 0;
 var cwords = 0, twords = 0;
 
 var started = false, ltime, dtime, time = 0;
@@ -120,7 +121,7 @@ function check()
             ltime = dtime;
             time++;
             var t = parseTime(TIME_LIMIT - time);
-            showResult(Math.floor(cchar / AVERAGE_LETTER_AMOUNT / time * 60));
+            showResult(stats());
             
             document.getElementById("timer").innerHTML = t;
         }
@@ -129,7 +130,7 @@ function check()
         
         if (time >= TIME_LIMIT)
         {
-            showOfficialResults(Math.floor(cchar / AVERAGE_LETTER_AMOUNT / time * 60));
+            showOfficialResults(stats());
             restart();
         }
         else
@@ -177,6 +178,30 @@ function dokeydown(e)
         started = true;
 }
 
+function stats()
+{
+    var mins = (time || 1) / 60;
+    return {
+        wpm: Math.floor(cchar / AVERAGE_LETTER_AMOUNT / mins),
+        raw: Math.floor(tchar / AVERAGE_LETTER_AMOUNT / mins),
+        accuracy: Math.round(((tchar - mistakes) / tchar || 0) * 100 * 10) / 10
+    };
+}
+
+function paintWord(h, typed)
+{
+    var ch = h.children;
+    for (var i = 0; i < ch.length; i++)
+    {
+        if (i >= typed.length)
+            ch[i].className = "ch" + (i == typed.length ? " next" : "");
+        else if (ch[i].textContent == typed.charAt(i))
+            ch[i].className = "ch right";
+        else
+            ch[i].className = "ch wrong";
+    }
+}
+
 function doWordCheck()
 {
     var h = document.getElementsByClassName("selected")[0];
@@ -185,6 +210,14 @@ function doWordCheck()
     current = inp.value;
     if (last != current && current != "")
     {
+        if (current.length > last.length)
+        {
+            tchar += current.length - last.length;
+            for (var i = last.length; i < current.length; i++)
+                if (current.charAt(i) != h.textContent.charAt(i))
+                    mistakes++;
+        }
+        paintWord(h, current);
         if (h.textContent.substring(0, current.length) == current)
         {
             h.className = "word selected";
@@ -198,17 +231,20 @@ function doWordCheck()
             h.className = "word selected incorrect";
     }
     else if (current == "")
+    {
         h.className = "word selected";
+        paintWord(h, "");
+    }
 }
 
-function showOfficialResults(wpm)
+function showOfficialResults(st)
 {
-    document.getElementById("result").innerHTML = "<font style='color:black;'>Speed: <b>" + wpm + " WPM</b></font><br /><font style='color:green'>Typed: <b>" + twords + "</b></font><br /><font style='color:red'>Incorrect: <b>" + (twords - cwords) + "</b></font><br /><font style='color:blue;'>Accuracy: <b>" + Math.round(((cwords / twords) || 0) * 100 * 1000) / 1000 + "%</b></font>";
+    document.getElementById("result").innerHTML = "<font style='color:black;'>Speed: <b>" + st.wpm + " WPM</b> <small>(raw " + st.raw + ")</small></font><br /><font style='color:green'>Typed: <b>" + twords + "</b></font><br /><font style='color:red'>Incorrect: <b>" + (twords - cwords) + "</b> words, <b>" + mistakes + "</b> keystrokes</font><br /><font style='color:blue;'>Accuracy: <b>" + st.accuracy + "%</b></font>";
 }
 
-function showResult(wpm)
+function showResult(st)
 {
-    document.getElementById("result").innerHTML = "Your Typing Speed is: <b>" + wpm + " WPM</b>";
+    document.getElementById("result").innerHTML = "Your Typing Speed is: <b>" + st.wpm + " WPM</b> <small>raw " + st.raw + " &middot; " + st.accuracy + "% accurate</small>";
 }
 
 function restart()
@@ -217,8 +253,13 @@ function restart()
     started = false;
     time = 0;
     cchar = 0;
+    tchar = 0;
+    mistakes = 0;
+    wchar = 0;
+    last = current = "";
     generateWords();
     wldiv.children[0].className = "word selected";
+    paintWord(wldiv.children[0], "");
     wldiv.scrollTop = 0;
     inp.value = "";
     cwords = 0;
@@ -236,11 +277,13 @@ function submitWord()
     {
         h.className = "word passed";
         wchar = 0;
+        tchar++;
         if (h.textContent != current)
             h.className += " incorrect";
         else
         {
             h.className += " correct";
+            cchar++;
             cwords++;
         }
         twords++;
@@ -260,7 +303,13 @@ function addWord(warry)
     var rand = Math.floor(Math.random() * warry.length);
     var word = warry[rand];
     var wdiv = document.createElement("div");
-    wdiv.textContent = word;
+    for (var i = 0; i < word.length; i++)
+    {
+        var c = document.createElement("span");
+        c.className = "ch";
+        c.textContent = word.charAt(i);
+        wdiv.appendChild(c);
+    }
     wdiv.className = "word";
     
     wldiv.appendChild(wdiv);

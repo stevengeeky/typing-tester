@@ -60,9 +60,23 @@ body {
     border-radius:4px;
 }
 .selected.incorrect {
-    background-color:lightgray;
+    background-color:#ffd0d0;
     color:red;
     border-radius:4px;
+}
+.ch.right {
+    color:green;
+}
+.ch.wrong {
+    color:red;
+    text-decoration:underline;
+}
+.selected .ch.next {
+    border-bottom:2px solid blue;
+}
+.passed .ch {
+    color:inherit;
+    text-decoration:none;
 }
 
 #autotype {

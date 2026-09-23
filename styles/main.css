@@ -122,6 +122,60 @@ button#restartButton:active {
     background-color:rgba(0, 0, 255, 1);
 }
 
+#results {
+    display:none;
+    text-align:left;
+    margin:0 auto 20px auto;
+    max-width:700px;
+    padding:8px;
+    border:1px solid black;
+    border-radius:7px;
+    background-color:white;
+    font:14px Verdana;
+}
+#results canvas {
+    display:block;
+    width:100%;
+    max-width:600px;
+    height:auto;
+    margin:8px auto;
+}
+#chartinfo {
+    color:#666;
+    font-size:12px;
+    min-height:16px;
+    text-align:center;
+}
+#best {
+    font-size:15px;
+    margin-bottom:4px;
+}
+#missed {
+    margin:10px 0;
+    line-height:1.7;
+}
+#missed .miss {
+    color:red;
+    text-decoration:underline;
+}
+#history table {
+    border-collapse:collapse;
+    width:100%;
+    font:13px Verdana;
+}
+#history th, #history td {
+    text-align:left;
+    padding:3px 6px;
+    border-bottom:1px solid #ddd;
+}
+#history tr.now td {
+    background-color:#eef;
+}
+#clearHistory {
+    margin-top:6px;
+    font:12px Verdana;
+}
+
 .uploadstuff {
     background:white;
     border:1px solid gray;

@@ -238,13 +238,14 @@ function doWordCheck()
     current = inp.value;
     if (last != current && current != "")
     {
-        if (current.length > last.length)
-        {
-            tchar += current.length - last.length;
-            for (var i = last.length; i < current.length; i++)
-                if (current.charAt(i) != h.textContent.charAt(i))
-                    mistakes++;
-        }
+        // count every new keystroke past the part that survived from the last frame
+        var same = 0;
+        while (same < last.length && same < current.length && last.charAt(same) == current.charAt(same))
+            same++;
+        tchar += current.length - same;
+        for (var i = same; i < current.length; i++)
+            if (current.charAt(i) != h.textContent.charAt(i))
+                mistakes++;
         paintWord(h, current);
         if (h.textContent.substring(0, current.length) == current)
         {

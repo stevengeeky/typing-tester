@@ -4,6 +4,9 @@
 // Interchangeable Stuff
 var WORD_AMOUNT = 600, AVERAGE_LETTER_AMOUNT = 4.5, TIME_LIMIT = 60, AUTO_TYPE_SPEED = 3, AUTO_TYPE_INCREASE = 1;
 var words = "confusing hello world something anything too told her father mother be time typing test best mother father daughter son great because mile sentence carry food own does house only made say night it's woman those these play river young night later answer picture father name even mom dad";
+// Prefer the bigger built-in list from scripts/words.js when it loaded; the string above is the fallback
+if (typeof DEFAULT_WORDS != "undefined" && DEFAULT_WORDS.length)
+    words = DEFAULT_WORDS.join(" ");
 
 (function(){
 // Internal

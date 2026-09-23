@@ -19,6 +19,7 @@ var cwords = 0, twords = 0;
 
 var started = false, ltime, dtime, time = 0;
 var autotype, atimer = 0;
+var duration;
 
 window.onload = function()
 {
@@ -27,6 +28,20 @@ window.onload = function()
     wldiv = document.getElementById("words");
     inp = document.getElementById("inp");
     autotype = document.getElementById("autotype").firstChild;
+    duration = document.getElementById("duration");
+    
+    try {
+        var savedLimit = parseInt(localStorage.getItem("typingTester.duration"), 10);
+        if (savedLimit > 0)
+            TIME_LIMIT = savedLimit;
+    } catch (e) {}
+    duration.value = TIME_LIMIT;
+    duration.onchange = function(){
+        TIME_LIMIT = parseInt(duration.value, 10) || 60;
+        try { localStorage.setItem("typingTester.duration", TIME_LIMIT); } catch (e) {}
+        restart();
+        inp.focus();
+    }
     
     document.getElementById("restartButton").onclick = function(){
         restart();
@@ -50,6 +65,13 @@ window.onload = function()
     {
         if (e.keyCode == 8 && document.activeElement != inp)
             e.preventDefault();
+        // Tab or Esc restarts from anywhere
+        if (e.keyCode == 9 || e.keyCode == 27)
+        {
+            e.preventDefault();
+            restart();
+            inp.focus();
+        }
     }
     document.getElementById("wupload").onchange = doupload;
     
@@ -174,6 +196,8 @@ function dokeydown(e)
         submitWord();
         inp.value = "";
     }
+    else if (e.keyCode == 9 || e.keyCode == 27)
+        return; // handled by window.onkeydown
     else if (!started && !e.ctrlKey)
         started = true;
 }

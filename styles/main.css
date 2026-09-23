@@ -82,6 +82,13 @@ body {
 #autotype {
     font:16px Verdana;
 }
+#duration {
+    font:16px Verdana;
+    padding:3px;
+    border:1px solid gray;
+    border-radius:2px;
+    background-color:white;
+}
 
 #timer {
     padding:4px;
@@ -121,4 +128,23 @@ button#restartButton:active {
     border-radius:4px;
     padding:3px;
     display:inline-block;
+}
+
+@media (max-width:600px) {
+    .container {
+        margin:10px 8px;
+    }
+    #words {
+        max-width:100%;
+        box-sizing:border-box;
+        font-size:18px;
+    }
+    #inp {
+        width:100%;
+        box-sizing:border-box;
+        margin-bottom:6px;
+    }
+    #result {
+        display:block;
+    }
 }
